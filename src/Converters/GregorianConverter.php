@@ -1,23 +1,32 @@
 <?php
+
 declare(strict_types=1);
 
 namespace TiagoHenrique92\Dekatrian\Converters;
 
-use TiagoHenrique92\Dekatrian\Entities\BaseDateEntity;
 use DateTime;
+use TiagoHenrique92\Dekatrian\Entities\GregorianDate;
 
-class GregorianConverter extends AbstractConverter
+class GregorianConverter implements Converter
 {
     private int $dekatrianYear;
     private int $dekatrianMonth;
     private int $dekatrianDay;
+    private int $gregorianDayOfMonth;
+    private int $gregorianDayOfYear;
+    private int $gregorianNumericMonth;
+    private int $gregorianNumericWeekday;
+    private string $gregorianTextMonth;
+    private string $gregorianTextWeekday;
+    private int $gregorianYear;
+    private bool $leapYear;
 
     /**
      * @param string $receivedDate
      * @param string|null $timezone
-     * @return BaseDateEntity
+     * @return GregorianDate
      */
-    public function convert(string $receivedDate, string $timezone = null): BaseDateEntity
+    public function convert(string $receivedDate, string $timezone = null): GregorianDate
     {
         $initialTimezone = date_default_timezone_get();
         date_default_timezone_set($timezone ?? $initialTimezone);
@@ -25,7 +34,16 @@ class GregorianConverter extends AbstractConverter
         $this->handler($receivedDate);
 
         date_default_timezone_set($initialTimezone);
-        return $this->baseDateEntity;
+        return new GregorianDate(
+            year: $this->gregorianYear,
+            dayOfYear: $this->gregorianDayOfYear,
+            dayOfMonth: $this->gregorianDayOfMonth,
+            leapYear: $this->leapYear,
+            numericMonth: $this->gregorianNumericMonth,
+            textMonth: $this->gregorianTextMonth,
+            textWeekday: $this->gregorianTextWeekday,
+            numericWeekday: $this->gregorianNumericWeekday
+        );
     }
 
     private function handler(string $receivedDate): void
@@ -44,7 +62,7 @@ class GregorianConverter extends AbstractConverter
 
     private function isLeapYear(): bool
     {
-        $lastDayOfYear = "{$this->dekatrianYear}-12-31";
+        $lastDayOfYear = "$this->dekatrianYear-12-31";
         return (bool) date('L', strtotime($lastDayOfYear));
     }
 
@@ -52,23 +70,28 @@ class GregorianConverter extends AbstractConverter
     {
         $leapYear = $this->isLeapYear();
         $diffDays = $leapYear ? 2 : 1;
-        $dekatrianDay = $this->dekatrianDay === 99 ? -1 : $this->dekatrianDay;
-        $dayOfYear = (($this->dekatrianMonth - 1) * 28) + $dekatrianDay + $diffDays - 1;
+
+        $key = "$this->dekatrianMonth-$this->dekatrianDay-$diffDays";
+        $dayOfYear = match ($key) {
+            "0-1-1", "0-1-2" => 0,
+            "0-2-2" => 1,
+            default => (($this->dekatrianMonth - 1) * 28) + $this->dekatrianDay + $diffDays - 1
+        };
 
         $date = DateTime::createFromFormat(
             'Y z' ,
-            "{$this->dekatrianYear} {$dayOfYear}"
+            "$this->dekatrianYear $dayOfYear"
         )->format('Y-m-d');
 
         $gregorianDateInfo = getdate(strtotime($date));
 
-        $this->baseDateEntity->setLeapYear($leapYear);
-        $this->baseDateEntity->setYear($gregorianDateInfo['year']);
-        $this->baseDateEntity->setDayOfYear($gregorianDateInfo['yday']);
-        $this->baseDateEntity->setDayOfMonth($gregorianDateInfo['mday']);
-        $this->baseDateEntity->setNumericMonth($gregorianDateInfo['mon']);
-        $this->baseDateEntity->setNumericWeekday($gregorianDateInfo['wday']);
-        $this->baseDateEntity->setTextMonth($gregorianDateInfo['month']);
-        $this->baseDateEntity->setTextWeekday($gregorianDateInfo['weekday']);
+        $this->leapYear = $leapYear;
+        $this->gregorianYear = $gregorianDateInfo['year'];
+        $this->gregorianDayOfYear = $gregorianDateInfo['yday'];
+        $this->gregorianDayOfMonth = $gregorianDateInfo['mday'];
+        $this->gregorianNumericMonth = $gregorianDateInfo['mon'];
+        $this->gregorianNumericWeekday = $gregorianDateInfo['wday'];
+        $this->gregorianTextMonth = $gregorianDateInfo['month'];
+        $this->gregorianTextWeekday = $gregorianDateInfo['weekday'];
     }
 }

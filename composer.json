@@ -3,6 +3,9 @@
     "description": "Dekatrian Calendar Library",
     "type": "library",
     "license": "MIT",
+    "require": {
+        "php": "8.*"
+    },
     "autoload": {
         "psr-4": {
             "TiagoHenrique92\\Dekatrian\\": "src/"
@@ -10,7 +13,7 @@
     },
     "authors": [
         {
-            "name": "Tiago Henrique Pereira",
+            "name": "Tiago Henrique Pereira de Oliveira",
             "homepage": "https://br.linkedin.com/in/tiagohpereira",
             "role": "Developer"
         }

@@ -6,6 +6,7 @@ use TiagoHenrique92\Dekatrian\Exceptions\DekatrianMonthNotFoundException;
 
 class DekatrianMonthEnum
 {
+    public const OUT_OF_TIME = 'Out Of Time';
     public const AURORAN = 'Auroran';
     public const BOREAN = 'Borean';
     public const CORONIAN = 'Coronian';
@@ -21,6 +22,7 @@ class DekatrianMonthEnum
     public const NIXIAN = 'Nixian';
 
     private static array $textMonths = [
+        0 => self::OUT_OF_TIME,
         1 => self::AURORAN,
         2 => self::BOREAN,
         3 => self::CORONIAN,
@@ -39,9 +41,9 @@ class DekatrianMonthEnum
     /**
      * @param int $numericMonth
      * @return string
-     * @throws Exception
+     * @throws DekatrianMonthNotFoundException
      */
-    public static function getTextMonth(int $numericMonth)
+    public static function getTextMonth(int $numericMonth): string
     {
         if (isset(self::$textMonths[$numericMonth])) {
             return self::$textMonths[$numericMonth];

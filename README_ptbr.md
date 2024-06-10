@@ -16,24 +16,24 @@ Para manter a compatibilidade com o calendário gregoriano, que possui 365 dias,
 | --- | --- |
 | 31 de Dezembro | 28 de Nixian |
 | 01 de Janeiro | `Achronian`  |
-| 02 de Janeiro | 01 de Aurorian |
-| 03 de Janeiro | 02 de Aurorian | 
+| 02 de Janeiro | 01 de Auroran |
+| 03 de Janeiro | 02 de Auroran | 
 
-Para os anos bissextos, que possuem 366 dias no calendário gregoriano, acrescentamos mais 1 dia após o Achronian, chamado ***Sinchronian*** - o dia da sincronia.
+Para os anos bissextos, que possuem 366 dias no calendário gregoriano, acrescentamos 1 dia após o Achronian, chamado ***Sinchronian*** - o dia da sincronia.
 
 | Gregoriano | Dekatriano |
 | --- | --- |
 | 31 de Dezembro | 28 de Nixian |
 | 01 de Janeiro | `Achronian` |
 | 02 de Janeiro | `Sinchronian` |
-| 03 de Janeiro | 01 de Aurorian | 
+| 03 de Janeiro | 01 de Auroran | 
 
 ## Meses
 
 Os meses no calendário dekatriano são nomeados em ordem alfabética:
 
-1. Aurorian
-2. Borian
+1. Auroran
+2. Borean
 3. Coronian
 4. Driadan
 5. Electran
@@ -50,31 +50,28 @@ Não existe um mês começado com a letra "J" porque os nomes foram definidos em
 
 ## Como usar
 
-Para converter uma data gregoriana em uma data dekatriana:
+Para converter uma data gregoriana numa data dekatriana:
 
 ```
 <?php
 $date = '2021-12-31'; //gregorian date
-$dekatrian = new DekatrianConverter();
-$dekatrianDate = $dekatrian->convert($date)->getDate(); //return '2021-13-28'
+$dekatrianDate = DekatrianDateFactory::createFromGregorian($date)->getDate(); //return '2021-13-28'
 ```
 
-Para converter uma data dekatriana em uma data gregoriana:
+Para converter uma data dekatriana numa data gregoriana:
 ```
 <?php
 $date = '2021-13-28'; //dekatrian date
-$gregorian = new GregorianConverter();
-$gregorianDate = $gregorian->convert($date)->getDate(); //return '2021-12-31'
+$gregorianDate = GregorianDateFactory::createFromDekatrian($date)->getDate(); //return '2021-12-31'
 ```
 
 Para retornar informações sobre a data:
 ```
 <?php
 $date = '2021-12-31'; //gregorian date
-$dekatrian = new DekatrianConverter();
-$dekatrianDate = $dekatrian->convert($date)->getDateInfo();
+$dekatrianDate = DekatrianDateFactory::createFromGregorian($date)->getDateInfo();
 
-//return
+// return
 Array
 (
     [mday] => 28
@@ -90,9 +87,9 @@ Array
 | Key | Description | Example returned values |
 | --- | --- | --- |
 | "mday" | Numeric representation of the day of the month | 1 to 28
-| "wday" | Numeric representation of the day of the week | 0 (for Sunday) through 6 (for Saturday)
+| "wday" | Numeric representation of the day of the week | <ul><li>-2 to 6 (Achronian, Sinchronian and other days in leap years)</li><li>-1 to 6 (Achronian and other days in non-leap years)</li></ul>
 | "mon" | Numeric representation of a month | 1 through 13
 | "year" | A full numeric representation of a year, 4 digits | 2021
-| "yday" | Numeric representation of the day of the year | 0 through 365
-| "weekday" | A full textual representation of the day of the week | Sunday through Saturday
-| "month" | A full textual representation of a month, such as Aurorian or Hermetian | Aurorian through Nixian
+| "yday" | Numeric representation of the day of the year | <ul><li>-2 to 363 in leap years</li><li>-1 to 363 in non-leap years</li></ul>
+| "weekday" | A full textual representation of the day of the week | Achronian, Sinchronian, Sunday through Saturday
+| "month" | A full textual representation of a month, such as Auroran or Hermetian | Auroran through Nixian, or Out Of Time in Achronian and Sinchronian

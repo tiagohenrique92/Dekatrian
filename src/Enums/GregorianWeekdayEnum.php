@@ -15,7 +15,7 @@ class GregorianWeekdayEnum
     const FRIDAY = 'Friday';
     const SATURDAY = 'Saturday';
 
-    private static $weekdays = [
+    private static array $weekdays = [
         0 => self::SUNDAY,
         1 => self::MONDAY,
         2 => self::TUESDAY,
@@ -37,7 +37,7 @@ class GregorianWeekdayEnum
     /**
      * @param int $numericWeekday
      * @return string
-     * @throws Exception
+     * @throws GregorianWeekdayNotFoundException
      */
     public static function getWeekday(int $numericWeekday): string
     {
